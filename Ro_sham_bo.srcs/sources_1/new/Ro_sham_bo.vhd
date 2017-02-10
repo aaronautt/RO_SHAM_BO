@@ -144,7 +144,7 @@ if rising_edge(slow_clk) then
     else
       choice <= 'X';
       player_select <= -1;
-      RPS_in_p <= X;
+      RPS_in_p <= 3;
     end if;
 end if;
 end process;

@@ -1,0 +1,87 @@
+Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2016.3 (lin64) Build 1682563 Mon Oct 10 19:07:26 MDT 2016
+| Date         : Fri Feb 10 18:23:54 2017
+| Host         : Aoide-ThinkPad-T410 running 64-bit Ubuntu 16.04.1 LTS
+| Command      : report_control_sets -verbose -file seven_seg_control_sets_placed.rpt
+| Design       : seven_seg
+| Device       : xc7a35t
+--------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Flip-Flop Distribution
+3. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Number of unique control sets                            |    21 |
+| Unused register locations in slices containing registers |    50 |
++----------------------------------------------------------+-------+
+
+
+2. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |             112 |           36 |
+| No           | No                    | Yes                    |               0 |            0 |
+| No           | Yes                   | No                     |             150 |           42 |
+| Yes          | No                    | No                     |             120 |           37 |
+| Yes          | No                    | Yes                    |               0 |            0 |
+| Yes          | Yes                   | No                     |              96 |           19 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+3. Detailed Control Set Information
+-----------------------------------
+
++--------------------+--------------------------------+--------------------------------+------------------+----------------+
+|    Clock Signal    |          Enable Signal         |        Set/Reset Signal        | Slice Load Count | Bel Load Count |
++--------------------+--------------------------------+--------------------------------+------------------+----------------+
+|  clock_divide_BUFG |                                | U2/count[0]                    |                1 |              1 |
+|  clock_divide_BUFG |                                | U2/plusOp[1]                   |                1 |              1 |
+|  clock_divide_BUFG |                                | U2/plusOp[0]                   |                1 |              2 |
+|  slow_clk_BUFG     |                                | player_select_digit[6]_i_1_n_0 |                2 |              5 |
+|  clock_IBUF_BUFG   | U5/State                       |                                |                2 |              8 |
+|  clock_IBUF_BUFG   | U3/State                       |                                |                3 |              8 |
+|  clock_IBUF_BUFG   | U4/State                       |                                |                4 |              8 |
+|  clock_divide_BUFG |                                |                                |                4 |             11 |
+|  clock_IBUF_BUFG   |                                |                                |                9 |             12 |
+|  clock_IBUF_BUFG   |                                | U1/clear                       |                6 |             20 |
+|  clock_IBUF_BUFG   |                                | U1/slow_count[0]_i_1_n_0       |                7 |             25 |
+|  slow_clk_BUFG     | player_select_digit[6]_i_1_n_0 | RPS_in_c[31]_i_1_n_0           |                8 |             32 |
+|  slow_clk_BUFG     | choice                         |                                |               10 |             32 |
+|  clock_IBUF_BUFG   |                                | U5/State                       |                8 |             32 |
+|  clock_IBUF_BUFG   |                                | U3/State                       |                8 |             32 |
+|  clock_IBUF_BUFG   |                                | U4/State                       |                8 |             32 |
+|  clock_divide_BUFG | U8/computer_temp               | U8/player_temp[31]_i_1_n_0     |                4 |             32 |
+|  clock_divide_BUFG | U8/computer_temp               | U8/computer_temp[31]_i_1_n_0   |                7 |             32 |
+|  clock_divide_BUFG | U8/computer_score[31]_i_1_n_0  |                                |                9 |             32 |
+|  clock_divide_BUFG | U8/player_score[31]_i_1_n_0    |                                |                9 |             32 |
+|  slow_clk_BUFG     |                                |                                |               23 |             89 |
++--------------------+--------------------------------+--------------------------------+------------------+----------------+
+
+
++--------+-----------------------+
+| Fanout | Number of ControlSets |
++--------+-----------------------+
+| 1      |                     2 |
+| 2      |                     1 |
+| 5      |                     1 |
+| 8      |                     3 |
+| 11     |                     1 |
+| 12     |                     1 |
+| 16+    |                    12 |
++--------+-----------------------+
+
+

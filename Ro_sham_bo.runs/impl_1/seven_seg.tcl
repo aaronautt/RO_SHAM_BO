@@ -45,88 +45,24 @@ proc step_failed { step } {
 set_msg_config -id {HDL 9-1061} -limit 100000
 set_msg_config -id {HDL 9-1654} -limit 100000
 
-start_step init_design
-set ACTIVE_STEP init_design
+start_step write_bitstream
+set ACTIVE_STEP write_bitstream
 set rc [catch {
-  create_msg_db init_design.pb
+  create_msg_db write_bitstream.pb
   set_param xicom.use_bs_reader 1
-  set_property design_mode GateLvl [current_fileset]
-  set_param project.singleFileAddWarning.threshold 0
+  open_checkpoint seven_seg_routed.dcp
   set_property webtalk.parent_dir /home/aaron/school/EGR426/Ro_sham_bo/Ro_sham_bo.cache/wt [current_project]
-  set_property parent.project_path /home/aaron/school/EGR426/Ro_sham_bo/Ro_sham_bo.xpr [current_project]
-  set_property ip_output_repo /home/aaron/school/EGR426/Ro_sham_bo/Ro_sham_bo.cache/ip [current_project]
-  set_property ip_cache_permissions {read write} [current_project]
-  add_files -quiet /home/aaron/school/EGR426/Ro_sham_bo/Ro_sham_bo.runs/synth_1/seven_seg.dcp
-  read_xdc /home/aaron/school/EGR426/Ro_sham_bo/Ro_sham_bo.srcs/constrs_1/new/Ro_sham_bo.xdc
-  link_design -top seven_seg -part xc7a35tcpg236-1
-  write_hwdef -file seven_seg.hwdef
-  close_msg_db -file init_design.pb
+  catch { write_mem_info -force seven_seg.mmi }
+  write_bitstream -force -no_partial_bitfile seven_seg.bit 
+  catch { write_sysdef -hwdef seven_seg.hwdef -bitfile seven_seg.bit -meminfo seven_seg.mmi -file seven_seg.sysdef }
+  catch {write_debug_probes -quiet -force debug_nets}
+  close_msg_db -file write_bitstream.pb
 } RESULT]
 if {$rc} {
-  step_failed init_design
+  step_failed write_bitstream
   return -code error $RESULT
 } else {
-  end_step init_design
-  unset ACTIVE_STEP 
-}
-
-start_step opt_design
-set ACTIVE_STEP opt_design
-set rc [catch {
-  create_msg_db opt_design.pb
-  opt_design 
-  write_checkpoint -force seven_seg_opt.dcp
-  report_drc -file seven_seg_drc_opted.rpt
-  close_msg_db -file opt_design.pb
-} RESULT]
-if {$rc} {
-  step_failed opt_design
-  return -code error $RESULT
-} else {
-  end_step opt_design
-  unset ACTIVE_STEP 
-}
-
-start_step place_design
-set ACTIVE_STEP place_design
-set rc [catch {
-  create_msg_db place_design.pb
-  implement_debug_core 
-  place_design 
-  write_checkpoint -force seven_seg_placed.dcp
-  report_io -file seven_seg_io_placed.rpt
-  report_utilization -file seven_seg_utilization_placed.rpt -pb seven_seg_utilization_placed.pb
-  report_control_sets -verbose -file seven_seg_control_sets_placed.rpt
-  close_msg_db -file place_design.pb
-} RESULT]
-if {$rc} {
-  step_failed place_design
-  return -code error $RESULT
-} else {
-  end_step place_design
-  unset ACTIVE_STEP 
-}
-
-start_step route_design
-set ACTIVE_STEP route_design
-set rc [catch {
-  create_msg_db route_design.pb
-  route_design 
-  write_checkpoint -force seven_seg_routed.dcp
-  report_drc -file seven_seg_drc_routed.rpt -pb seven_seg_drc_routed.pb -rpx seven_seg_drc_routed.rpx
-  report_methodology -file seven_seg_methodology_drc_routed.rpt -rpx seven_seg_methodology_drc_routed.rpx
-  report_timing_summary -warn_on_violation -max_paths 10 -file seven_seg_timing_summary_routed.rpt -rpx seven_seg_timing_summary_routed.rpx
-  report_power -file seven_seg_power_routed.rpt -pb seven_seg_power_summary_routed.pb -rpx seven_seg_power_routed.rpx
-  report_route_status -file seven_seg_route_status.rpt -pb seven_seg_route_status.pb
-  report_clock_utilization -file seven_seg_clock_utilization_routed.rpt
-  close_msg_db -file route_design.pb
-} RESULT]
-if {$rc} {
-  write_checkpoint -force seven_seg_routed_error.dcp
-  step_failed route_design
-  return -code error $RESULT
-} else {
-  end_step route_design
+  end_step write_bitstream
   unset ACTIVE_STEP 
 }
 
