@@ -1,21 +1,10 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
+-- Engineer: Aaron Crump
+-- Class: EGR 426
 -- Create Date: 01/31/2017 08:14:47 AM
 -- Design Name: 
 -- Module Name: decoder - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
+-- Project Name: ROSHAMBO
 ----------------------------------------------------------------------------------
 
 
@@ -32,9 +21,11 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity decoder is
-  Port (RPS_in : in integer;
+  Port (RPS_in : in integer; -- rock paper scissors selection input
+        -- rock paper scissors selection seven segment ouptu
         RPS_out : out std_logic_vector (6 downto 0);
-        digit_in : in integer;
+        digit_in : in integer; -- score value input
+        -- score value seven segment display output
         digit_out : out std_logic_vector (6 downto 0));
 end decoder;
 

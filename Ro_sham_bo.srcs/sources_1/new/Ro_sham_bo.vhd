@@ -1,20 +1,10 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
+-- Engineer: Aaron Crump
+-- Class: 
 -- Create Date: 01/22/2017 02:03:08 PM
 -- Design Name: 
 -- Module Name: seven_seg - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
+-- Project Name: ROSHAMBO
 -- 
 ----------------------------------------------------------------------------------
 
@@ -36,8 +26,7 @@ use IEEE.numeric_std.all;
 
 entity seven_seg is
     Port ( clock : in std_logic;
-           --sel : in STD_LOGIC_VECTOR (2 downto 0);
-            -- sw2 is msb, sw0 is lsb
+          
            seven : inout std_logic_vector (6 downto 0);
            --bit 6 = segment a, downto bit 0 = g
            -- button to select rock
@@ -55,7 +44,7 @@ end seven_seg;
 architecture Behavioral of seven_seg is
 
 component roshambo_logic
-port (
+port (clock : in std_logic;
       player_select : in integer;
       computer_select : in integer;
       computer_score : out integer;
@@ -127,57 +116,70 @@ U4: debouncer port map(clk => clock, btn_out => btn_out_r, btn_in => btn_right);
 U5: debouncer port map(clk => clock, btn_out => btn_out_c, btn_in => btn_cntr);  
 U6: decoder port map(RPS_in => RPS_in_p, RPS_out => RPS_out_p, digit_in => digit_in_p, digit_out => digit_out_p);
 U7: decoder port map(RPS_in => RPS_in_c, RPS_out => RPS_out_c, digit_in => digit_in_c, digit_out => digit_out_c);
-U8: roshambo_logic port map(player_select => player_select, computer_select => computer_select, player_score => player_score, 
+U8: roshambo_logic port map(clock => clock_divide, player_select => player_select, computer_select => computer_select, player_score => player_score, 
     computer_score => computer_score);
 
 
+-- checks button presses and associates them with the corresponding rock, paper
+-- scissors state, also sets or clears the choice signal, which sets a new game
+-- starting.
 kicked: process(slow_clk, btn_out_r, btn_out_l, btn_out_c)
 begin  
 if rising_edge(slow_clk) then
     if btn_out_r = '0' and btn_out_l = '0' and btn_out_c = '0' then
         choice <= '0';
-    elsif btn_out_r = '1' then
+        player_select <= -1;
+    elsif btn_out_r = '1' and btn_out_l = '0' and btn_out_c = '0' then
+        player_select <= 2;
         RPS_in_p <= 2;
         choice <= '1';
-    elsif btn_out_l = '1' then
-        RPS_in_p <= 0;   
+    elsif btn_out_l = '1' and btn_out_r = '0' and btn_out_c = '0' then
+        player_select <= 0;
+        RPS_in_p <= 0;
         choice <= '1';
-    elsif btn_out_c <= '1' then
+    elsif btn_out_c <= '1' and btn_out_l = '0' and btn_out_r = '0' then
+        player_select <= 1;
         RPS_in_p <= 1;
         choice <= '1';
-    else choice <= 'X';
+    else
+      choice <= 'X';
+      player_select <= -1;
+      RPS_in_p <= X;
     end if;
 end if;
 end process;
 
 
 
+-- When choice is low the computer's rock, paper, scissors choice spins. When
+-- choice goes high, the computers selection is frozen and th players selection
+-- is shown. The score is also passed to the decoder each cycle.
 roshambo_rotate: process(choice, slow_clk)
 
     begin
-    
+
     if rising_edge(slow_clk) then
     digit_in_p <= player_score;
     digit_in_c <= computer_score;
+    computer_score_digit <= digit_out_c;
+    player_score_digit <= digit_out_p;
         if choice = '0' then -- flag check to make sure a button hasn't been pressed
-         if RPS_in_c = 2 then 
+         if RPS_in_c = 2 then
             RPS_in_c <= 0;
          else
             RPS_in_c <= RPS_in_c + 1;
-         end if;            
+         end if;
          computer_select_digit <= RPS_out_c;
-         computer_select <= RPS_in_c;
+         --computer_select <= RPS_in_c;
          player_select_digit <= "1111111";
-         
+
         elsif choice = '1' then
          computer_select_digit <= RPS_out_c;
          player_select_digit <= RPS_out_p;
-         computer_score_digit <= digit_out_c;
-         player_score_digit <= digit_out_p;
          computer_select <= RPS_in_c; 
          -- pass scores to decoder
         end if;
-    end if;     
+    end if;
     end process;
 
 end Behavioral;

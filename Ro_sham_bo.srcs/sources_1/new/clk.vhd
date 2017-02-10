@@ -1,21 +1,12 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Engineer: Aaron Crump
+-- Class: EGR 426
 -- 
 -- Create Date: 01/23/2017 09:19:07 AM
 -- Design Name: 
 -- Module Name: clk - Behavioral
--- Project Name: 
+-- Project Name: roshambo
 -- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
 ----------------------------------------------------------------------------------
 
 
@@ -50,6 +41,8 @@ signal clk_count : std_logic_vector (18 downto 0) := "0000000000000000000";
 signal slow_count : std_logic_vector (23 downto 0) := "000000000000000000000000";
 signal fast_count : std_logic_vector (13 downto 0) := "00000000000000"; --10000 hz clock
 
+
+-- makes three clock signals of three different speeds
 
 -- 4 ms clock, 250 hz
 begin

@@ -1,21 +1,10 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
+-- Engineer: Aaron Crump
+-- Class: EGR 426
 -- Create Date: 01/29/2017 02:49:08 PM
 -- Design Name: 
 -- Module Name: mux - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
+-- Project Name: ROSHAMBO
 ----------------------------------------------------------------------------------
 
 
@@ -33,8 +22,9 @@ use IEEE.std_logic_unsigned.all;
 --use UNISIM.VComponents.all;
 
 entity mux is
- port(an_sel : out std_logic_vector (3 downto 0);
-      seven : out std_logic_vector (6 downto 0);
+ port(an_sel : out std_logic_vector (3 downto 0); --anode selection
+      seven : out std_logic_vector (6 downto 0); -- seven segment display selection
+      -- rock, paper, scissors selection, and scores decoded input
       player_select_digit : in std_logic_vector (6 downto 0);
       computer_select_digit : in std_logic_vector (6 downto 0);
       player_score_digit : in std_logic_vector (6 downto 0);
