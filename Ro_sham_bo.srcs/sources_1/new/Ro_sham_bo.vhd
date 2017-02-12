@@ -47,8 +47,8 @@ component roshambo_logic
 port (clock : in std_logic;
       player_select : in integer;
       computer_select : in integer;
-      computer_score : out integer;
-      player_score : out integer);
+      computer_score : inout integer;
+      player_score : inout integer);
 end component;
 
 component clk
@@ -176,7 +176,7 @@ roshambo_rotate: process(choice, slow_clk)
         elsif choice = '1' then
          computer_select_digit <= RPS_out_c;
          player_select_digit <= RPS_out_p;
-         computer_select <= RPS_in_c; 
+         --computer_select <= RPS_in_c; 
          -- pass scores to decoder
         end if;
     end if;

@@ -56,22 +56,25 @@ M1: debouncer port map (clk => clk, btn_in => btn_in, btn_out => btn_out);
 clk_process: process
    begin
         clk <= '0';
-        wait for 1 ps;  --for 1 ps signal is '0'.
+        wait for 50 us;  --for 50 us signal is '0'.
         clk <= '1';
-        wait for 1 ps;  --for next 1 ps signal is '1'.
+        wait for 50 us;  --for next 50 us signal is '1'.
    end process;
    
 stim_process: process
 begin
 
---wait for 100 ns;         
-        wait for 7 ns;
+-- The debounce counts to 15 on a clock running with a period of 100 us
+-- btn_out should go high for the first btn_in high, since 2000us is more than a 15 count
+--on the debounce clock, this is confirmed by the waveform. The next high signal is only 1000 us
+--long so btn_out should not go high.
+        wait for 2000 us;
         btn_in <='1';
-        wait for 500 ns;    
+        wait for 2000 us;    
         btn_in <='0'; 
-        wait for 17 ns;
+        wait for 2000 us;
         btn_in <= '1';
-        wait for 1000 ns;    
+        wait for 1000 us;    
         btn_in <= '0'; 
         wait;
   end process;

@@ -25,44 +25,51 @@ entity roshambo_logic is
 port (clock : in std_logic;
       player_select : in integer;
       computer_select : in integer;
-      computer_score : out integer;
-      player_score : out integer);
+      computer_score : inout integer;
+      player_score : inout integer);
 end roshambo_logic;
 
 architecture Behavioral of roshambo_logic is
 begin
-roshambo: process(clock) -- checks roshambo logic once per clock cycle if 
-  variable player_temp, computer_temp : integer := -1;
+roshambo: process(clock, player_score, computer_score) -- checks roshambo logic once per clock cycle if 
+  --variable player_temp, computer_temp : integer := -1;
   variable state : std_logic_vector (1 downto 0) := "00";
 begin
   if rising_edge(clock) then
   
     case state is
-      when "00" =>
+      when "00" => -- first state, stays here if no buttons are pressed
         if player_select = 0 or player_select = 1 or player_select = 2 then
           state := "01";
         else state := "00";
         end if;
-    when "01" =>
-            if player_select - computer_select = 0 then
-                player_temp := player_temp + 1;
-                computer_temp := computer_temp + 1;
-                computer_score <= computer_temp;
-                player_score <= player_temp;
-            elsif (((player_select - computer_select) + 3) mod 3) = 1 then
-                player_temp := player_temp + 1;
-                player_score <= player_temp;
-            else computer_temp := computer_temp +1;
-                computer_score <= computer_temp;
+    when "01" => -- second state, entered after a button is pressed and the player makes a choice 
+            if player_select - computer_select = 0 then -- tie game both scores increased
+                player_score <= player_score + 1;
+                computer_score <= computer_score + 1;
+--                player_temp := player_temp + 1;
+--                computer_temp := computer_temp + 1;
+--                computer_score <= computer_temp;
+--                player_score <= player_temp;
+            elsif (((player_select - computer_select) + 3) mod 3) = 1 then -- if this expression is true the player wins
+                player_score <= player_score + 1;
+--                player_temp := player_temp + 1;
+--                player_score <= player_temp;
+            else computer_score <= computer_score +1; -- otherwise the computer wins
+                --computer_score <= computer_temp;
             end if;
             --update scores
-            if player_temp > 9 then player_temp := 0;
+            if player_score = 9 then -- if one player gets to 9 then both scores are reset 
+            player_score <= 0;
+            computer_score <= 0;
             end if;
-            if computer_temp > 9 then computer_temp := 0;
+            if computer_score = 9 then 
+            computer_score <= 0;
+            player_score <= 0;
             end if;
        state := "10";
     when "10" =>
-       if player_select = -1 then
+       if player_select = -1 then -- if all three buttons go low, state is switched, so score is only incremented once
         state := "00";
        end if;
     when others =>
