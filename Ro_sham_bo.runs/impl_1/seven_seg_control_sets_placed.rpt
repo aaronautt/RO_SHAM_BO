@@ -1,7 +1,7 @@
 Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.
 --------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2016.3 (lin64) Build 1682563 Mon Oct 10 19:07:26 MDT 2016
-| Date         : Sun Feb 12 14:28:40 2017
+| Date         : Mon Feb 13 09:57:38 2017
 | Host         : Aoide-ThinkPad-T410 running 64-bit Ubuntu 16.04.1 LTS
 | Command      : report_control_sets -verbose -file seven_seg_control_sets_placed.rpt
 | Design       : seven_seg
@@ -23,7 +23,7 @@ Table of Contents
 |                          Status                          | Count |
 +----------------------------------------------------------+-------+
 | Number of unique control sets                            |    19 |
-| Unused register locations in slices containing registers |    84 |
+| Unused register locations in slices containing registers |    83 |
 +----------------------------------------------------------+-------+
 
 
@@ -33,12 +33,12 @@ Table of Contents
 +--------------+-----------------------+------------------------+-----------------+--------------+
 | Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
 +--------------+-----------------------+------------------------+-----------------+--------------+
-| No           | No                    | No                     |             106 |           33 |
+| No           | No                    | No                     |             107 |           40 |
 | No           | No                    | Yes                    |               0 |            0 |
-| No           | Yes                   | No                     |              54 |           19 |
-| Yes          | No                    | No                     |              32 |            9 |
+| No           | Yes                   | No                     |              54 |           18 |
+| Yes          | No                    | No                     |              96 |           29 |
 | Yes          | No                    | Yes                    |               0 |            0 |
-| Yes          | Yes                   | No                     |             108 |           28 |
+| Yes          | Yes                   | No                     |              44 |           12 |
 +--------------+-----------------------+------------------------+-----------------+--------------+
 
 
@@ -48,25 +48,25 @@ Table of Contents
 +--------------------+--------------------------------+--------------------------------+------------------+----------------+
 |    Clock Signal    |          Enable Signal         |        Set/Reset Signal        | Slice Load Count | Bel Load Count |
 +--------------------+--------------------------------+--------------------------------+------------------+----------------+
-|  U4/latch_reg_n_0  |                                |                                |                1 |              1 |
 |  U5/latch_reg_n_0  |                                |                                |                1 |              1 |
 |  U3/latch_reg_n_0  |                                |                                |                1 |              1 |
 |  clock_divide_BUFG |                                | U2/count[0]                    |                1 |              1 |
 |  clock_divide_BUFG |                                | U2/plusOp[1]                   |                1 |              1 |
+|  U4/latch_reg_n_0  |                                |                                |                1 |              1 |
 |  clock_divide_BUFG |                                | U2/plusOp[0]                   |                2 |              2 |
 |  clock_IBUF_BUFG   |                                |                                |                3 |              3 |
 |  clock_IBUF_BUFG   | U3/DB_count[3]_i_2_n_0         | U3/DB_count[3]_i_1_n_0         |                1 |              4 |
 |  clock_IBUF_BUFG   | U4/DB_count[3]_i_2__0_n_0      | U4/DB_count[3]_i_1__0_n_0      |                1 |              4 |
 |  clock_IBUF_BUFG   | U5/DB_count[3]_i_2__1_n_0      | U5/DB_count[3]_i_1__1_n_0      |                1 |              4 |
-|  slow_clk_BUFG     |                                | player_select_digit[6]_i_1_n_0 |                2 |              5 |
-|  clock_divide_BUFG |                                |                                |                4 |             11 |
+|  slow_clk_BUFG     |                                | player_select_digit[6]_i_1_n_0 |                1 |              5 |
+|  clock_divide_BUFG |                                |                                |                8 |             18 |
 |  clock_IBUF_BUFG   |                                | U1/clear                       |                6 |             20 |
 |  clock_IBUF_BUFG   |                                | U1/slow_count[0]_i_1_n_0       |                7 |             25 |
-|  clock_divide_BUFG | U8/computer_score[31]_i_1_n_0  | U8/player_score[31]_i_1_n_0    |                8 |             32 |
-|  clock_divide_BUFG | U8/player_score[31]_i_2_n_0    | U8/player_score[31]_i_1_n_0    |                8 |             32 |
-|  slow_clk_BUFG     | choice                         |                                |                9 |             32 |
 |  slow_clk_BUFG     | player_select_digit[6]_i_1_n_0 | RPS_in_c[31]_i_1_n_0           |                9 |             32 |
-|  slow_clk_BUFG     |                                |                                |               23 |             89 |
+|  clock_divide_BUFG | U8/computer_score[31]_i_1_n_0  |                                |               10 |             32 |
+|  clock_divide_BUFG | U4/E[0]                        |                                |                9 |             32 |
+|  clock_divide_BUFG | U8/player_score[31]_i_1_n_0    |                                |               10 |             32 |
+|  slow_clk_BUFG     |                                |                                |               26 |             83 |
 +--------------------+--------------------------------+--------------------------------+------------------+----------------+
 
 
@@ -78,8 +78,7 @@ Table of Contents
 | 3      |                     1 |
 | 4      |                     3 |
 | 5      |                     1 |
-| 11     |                     1 |
-| 16+    |                     7 |
+| 16+    |                     8 |
 +--------+-----------------------+
 
 

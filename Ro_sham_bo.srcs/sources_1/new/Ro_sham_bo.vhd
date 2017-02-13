@@ -123,22 +123,25 @@ U8: roshambo_logic port map(clock => clock_divide, player_select => player_selec
 -- checks button presses and associates them with the corresponding rock, paper
 -- scissors state, also sets or clears the choice signal, which sets a new game
 -- starting.
-kicked: process(slow_clk, btn_out_r, btn_out_l, btn_out_c)
+kicked: process(clock_divide, btn_out_r, btn_out_l, btn_out_c)
 begin  
-if rising_edge(slow_clk) then
+if rising_edge(clock_divide) then
     if btn_out_r = '0' and btn_out_l = '0' and btn_out_c = '0' then
         choice <= '0';
         player_select <= -1;
     elsif btn_out_r = '1' and btn_out_l = '0' and btn_out_c = '0' then
         player_select <= 2;
+        computer_select <= RPS_in_c;
         RPS_in_p <= 2;
         choice <= '1';
     elsif btn_out_l = '1' and btn_out_r = '0' and btn_out_c = '0' then
         player_select <= 0;
+        computer_select <= RPS_in_c;
         RPS_in_p <= 0;
         choice <= '1';
     elsif btn_out_c <= '1' and btn_out_l = '0' and btn_out_r = '0' then
         player_select <= 1;
+        computer_select <= RPS_in_c;
         RPS_in_p <= 1;
         choice <= '1';
     else
