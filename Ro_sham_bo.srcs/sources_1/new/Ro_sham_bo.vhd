@@ -106,7 +106,6 @@ signal btn_out_l : std_logic;
 signal btn_out_c : std_logic;
 signal choice : std_logic; -- flag to show that game has started
 
-
 begin
 U1: clk port map(clock_in => clock, clk_out => clock_divide, clock_out_slow => slow_clk, clock_out_fast => fast_clock);
 U2: mux port map(seven => seven, an_sel => an_sel, clk => clock_divide, player_select_digit => player_select_digit, player_score_digit => player_score_digit,

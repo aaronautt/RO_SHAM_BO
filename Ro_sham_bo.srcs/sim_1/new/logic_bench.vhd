@@ -41,10 +41,11 @@ end logic_bench;
 
 architecture Behavioral of logic_bench is
 component roshambo_logic
-port (player_select : in integer;
+port (clock : in std_logic;
+      player_select : in integer;
       computer_select : in integer;
-      computer_score : out integer;
-      player_score : out integer);
+      computer_score : inout integer;
+      player_score : inout integer);
 end component;
 
 
@@ -52,65 +53,68 @@ signal player_select : integer := 0;--inputs
 signal computer_select : integer := 0;
 signal computer_score : integer := 0;--outputs
 signal player_score : integer := 0;
-
---procedure monitor(shouldbe : in std_logic) is --monitor procedure
---variable lout : line;
---begin
---write(lout, now, right, 10, ns);
---write(lout, string'(" player_select -->"));
---write(lout, player_select);
---write(lout, string'(" computer_select -->"));
---write(lout, computer_select);
---write(lout, string'(" player_score -->"));
---write(lout, player_score);
---write(lout, string'(" computer_score -->"));
---write(lout, computer_score);
---writeline(output, lout);
---assert btn_out = shouldbe report "test failed" severity error;
---end monitor;
+signal clock : std_logic;
 
 begin
 M4: roshambo_logic port map (player_select => player_select, computer_select => computer_select, computer_score => computer_score,
-    player_score => player_score);
+    player_score => player_score, clock => clock);
    
---clk_process: process
---   begin
---        clk <= '0';
---        wait for 1 ns;  --for 1 ps signal is '0'.
---        clk <= '1';
---        wait for 1 ns;  --for next 1 ps signal is '1'.
---   end process;   
+clk_process: process
+   begin
+        clock <= '0';
+        wait for 1 ns;  --for 1 ps signal is '0'.
+        clock <= '1';
+        wait for 1 ns;  --for next 1 ps signal is '1'.
+   end process;   
 stim_process: process
 begin
 -- 0 = rock, 1 = paper, 2 = scissors
 
-        wait for 5 ns;
+        wait for 25 ns;
         player_select <= 0; -- this series tests all 9 possible combinations
         computer_select <= 0; -- scores should increase in the order -,c,p,p,-,c,c,p,-
-        wait for 1 ns;    
+        wait for 5 ns;
+        player_select <= -1;
+        wait for 5 ns;    
         player_select <= 0;
+        wait for 5 ns;
+                player_select <= -1;
         computer_select <= 1;
-        wait for 1 ns;
+        wait for 5 ns;
         player_select <= 0;
         computer_select <= 2;
-        wait for 1 ns;    
+        wait for 5 ns;
+                player_select <= -1;
+        wait for 5 ns;    
         player_select <= 1;
         computer_select <= 0;
-        wait for 1 ns;
+        wait for 5 ns;
+                player_select <= -1;
+        wait for 5 ns;
         player_select <= 1;
         computer_select <= 1;
-        wait for 1 ns;
+        wait for 5 ns;
+                player_select <= -1;
+        wait for 5 ns;
         player_select <= 1;
         computer_select <= 2;
-        wait for 1 ns;
+        wait for 5 ns;
+                player_select <= -1;
+        wait for 5 ns;
         player_select <= 2;
         computer_select <= 0;
-        wait for 1 ns;
+        wait for 5 ns;
+                player_select <= -1;
+        wait for 5 ns;
         player_select <= 2;
         computer_select <= 1;
-        wait for 1 ns;
+        wait for 5 ns;
+                player_select <= -1;
+        wait for 5 ns;
         player_select <= 2;
         computer_select <= 2;
+        wait for 5 ns;
+                player_select <= -1;
         wait for 5 ns;
         wait;
 
