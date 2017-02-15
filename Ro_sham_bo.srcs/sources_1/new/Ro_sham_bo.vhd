@@ -45,10 +45,11 @@ architecture Behavioral of seven_seg is
 
 component roshambo_logic
 port (clock : in std_logic;
-      player_select : in integer;
-      computer_select : in integer;
-      computer_score : inout integer;
-      player_score : inout integer);
+      computer_score_out : out std_logic_vector (6 downto 0);
+      player_score_out : out std_logic_vector (6 downto 0);
+      player_select_out : out std_logic_vector (6 downto 0);
+      computer_select_out : out std_logic_vector (6 downto 0); 
+      btn_l, btn_r, btn_c : in std_logic);
 end component;
 
 component clk
@@ -56,13 +57,6 @@ component clk
            clock_out_slow: out std_logic;
            clk_out : out std_logic;
            clock_out_fast : out std_logic);
-end component;
-
-component decoder 
-  Port (RPS_in : in integer;
-        RPS_out : out std_logic_vector (6 downto 0);
-        digit_in : in integer;
-        digit_out : out std_logic_vector (6 downto 0));
 end component;
 
 
@@ -82,106 +76,29 @@ component debouncer
          btn_out : out std_logic);
 end component;
 
-signal RPS_in_p : integer := 1; -- selection of rock paper or scissors
-signal RPS_out_p : std_logic_vector (6 downto 0); -- decoded RPS representation of the three letters
-signal digit_in_p : integer; -- binary counter from 0 to 9
-signal digit_out_p : std_logic_vector (6 downto 0); -- decoded digit for seven segment display
 signal clock_divide : std_logic; --4ms clock
-signal RPS_in_c : integer := 1; -- selection of rock paper or scissors
-signal RPS_out_c : std_logic_vector (6 downto 0); -- decoded RPS representation of the three letters
-signal digit_in_c : integer; -- binary counter from 0 to 9
-signal digit_out_c : std_logic_vector (6 downto 0); -- decoded digit for seven segment display
 signal slow_clk : std_logic; -- 10 ms clock
-signal player_select : integer; --player choice rock, paper, scissors
-signal computer_select : integer; -- computer RPS
 signal player_select_digit : std_logic_vector (6 downto 0); --player choice rock, paper, scissors (7 bit digit form)
 signal computer_select_digit : std_logic_vector (6 downto 0); -- computer RPS selection (7 bit digit form)
 signal player_score_digit : std_logic_vector (6 downto 0); -- player RPS score (digit)
 signal computer_score_digit : std_logic_vector (6 downto 0);-- computer RPS score (digit)
-signal player_score : integer := 0; -- player RPS score (value) counts up to 9
-signal computer_score : integer := 0;-- computer RPS score (value) count up to 9
 signal fast_clock : std_logic; -- 1/10 ms clock
 signal btn_out_r : std_logic; -- button output to verify debounced button signals
 signal btn_out_l : std_logic;
 signal btn_out_c : std_logic;
-signal choice : std_logic; -- flag to show that game has started
+
 
 begin
 U1: clk port map(clock_in => clock, clk_out => clock_divide, clock_out_slow => slow_clk, clock_out_fast => fast_clock);
-U2: mux port map(seven => seven, an_sel => an_sel, clk => clock_divide, player_select_digit => player_select_digit, player_score_digit => player_score_digit,
-    computer_select_digit => computer_select_digit, computer_score_digit => computer_score_digit);
+U2: mux port map(seven => seven, an_sel => an_sel, clk => clock_divide, player_select_digit => player_select_digit,
+     player_score_digit => player_score_digit, computer_select_digit => computer_select_digit, 
+     computer_score_digit => computer_score_digit);
 U3: debouncer port map(clk => clock, btn_out => btn_out_l, btn_in => btn_left);
 U4: debouncer port map(clk => clock, btn_out => btn_out_r, btn_in => btn_right);
 U5: debouncer port map(clk => clock, btn_out => btn_out_c, btn_in => btn_cntr);  
-U6: decoder port map(RPS_in => RPS_in_p, RPS_out => RPS_out_p, digit_in => digit_in_p, digit_out => digit_out_p);
-U7: decoder port map(RPS_in => RPS_in_c, RPS_out => RPS_out_c, digit_in => digit_in_c, digit_out => digit_out_c);
-U8: roshambo_logic port map(clock => clock_divide, player_select => player_select, computer_select => computer_select, player_score => player_score, 
-    computer_score => computer_score);
+U8: roshambo_logic port map(clock => slow_clk, btn_l => btn_out_l, btn_r => btn_out_r, btn_c => btn_out_c,
+    player_select_out => player_select_digit, computer_select_out => computer_select_digit, player_score_out => player_score_digit, 
+    computer_score_out => computer_score_digit);
 
-
--- checks button presses and associates them with the corresponding rock, paper
--- scissors state, also sets or clears the choice signal, which sets a new game
--- starting.
-kicked: process(clock_divide, btn_out_r, btn_out_l, btn_out_c)
-begin  
-if rising_edge(clock_divide) then
-    if btn_out_r = '0' and btn_out_l = '0' and btn_out_c = '0' then
-        choice <= '0';
-        player_select <= -1;
-    elsif btn_out_r = '1' and btn_out_l = '0' and btn_out_c = '0' then
-        player_select <= 2;
-        computer_select <= RPS_in_c;
-        RPS_in_p <= 2;
-        choice <= '1';
-    elsif btn_out_l = '1' and btn_out_r = '0' and btn_out_c = '0' then
-        player_select <= 0;
-        computer_select <= RPS_in_c;
-        RPS_in_p <= 0;
-        choice <= '1';
-    elsif btn_out_c <= '1' and btn_out_l = '0' and btn_out_r = '0' then
-        player_select <= 1;
-        computer_select <= RPS_in_c;
-        RPS_in_p <= 1;
-        choice <= '1';
-    else
-      choice <= 'X';
-      player_select <= -1;
-      RPS_in_p <= 3;
-    end if;
-end if;
-end process;
-
-
-
--- When choice is low the computer's rock, paper, scissors choice spins. When
--- choice goes high, the computers selection is frozen and th players selection
--- is shown. The score is also passed to the decoder each cycle.
-roshambo_rotate: process(choice, slow_clk)
-
-    begin
-
-    if rising_edge(slow_clk) then
-    digit_in_p <= player_score;
-    digit_in_c <= computer_score;
-    computer_score_digit <= digit_out_c;
-    player_score_digit <= digit_out_p;
-        if choice = '0' then -- flag check to make sure a button hasn't been pressed
-         if RPS_in_c = 2 then
-            RPS_in_c <= 0;
-         else
-            RPS_in_c <= RPS_in_c + 1;
-         end if;
-         computer_select_digit <= RPS_out_c;
-         --computer_select <= RPS_in_c;
-         player_select_digit <= "1111111";
-
-        elsif choice = '1' then
-         computer_select_digit <= RPS_out_c;
-         player_select_digit <= RPS_out_p;
-         --computer_select <= RPS_in_c; 
-         -- pass scores to decoder
-        end if;
-    end if;
-    end process;
 
 end Behavioral;

@@ -25,15 +25,42 @@ use IEEE.std_logic_unsigned.all;
 
 entity roshambo_logic is
 port (clock : in std_logic;
-      player_select : in integer;
-      computer_select : in integer;
-      computer_score : inout integer;
-      player_score : inout integer);
+      computer_score_out : out std_logic_vector (6 downto 0);
+      player_score_out : out std_logic_vector (6 downto 0);
+      player_select_out : out std_logic_vector (6 downto 0);
+      computer_select_out : out std_logic_vector (6 downto 0); 
+      btn_l, btn_r, btn_c : in std_logic);
 end roshambo_logic;
 
+
 architecture Behavioral of roshambo_logic is
+
+component decoder 
+  Port (RPS_in : in integer;
+        RPS_out : out std_logic_vector (6 downto 0);
+        digit_in : in integer;
+        digit_out : out std_logic_vector (6 downto 0));
+end component;
+
+signal computer_score : integer;
+signal player_score : integer;
+signal player_select : integer;
+signal computer_select : integer; 
+signal choice : std_logic;
+signal RPS_in_p : integer := 1; -- selection of rock paper or scissors
+signal digit_in_p : integer; -- binary counter from 0 to 9
+signal RPS_in_c : integer := 1; -- selection of rock paper or scissors
+signal digit_in_c : integer; -- binary counter from 0 to 9
+
+
 begin
-roshambo: process(clock, player_score, computer_score) -- checks roshambo logic once per clock cycle if 
+U6: decoder port map(RPS_in => RPS_in_p, RPS_out => player_select_out, digit_in => digit_in_p, digit_out => player_score_out);
+U7: decoder port map(RPS_in => RPS_in_c, RPS_out => computer_select_out, digit_in => digit_in_c, digit_out => computer_score_out);
+
+digit_in_p <= player_score;
+digit_in_c <= computer_score;
+
+roshambo: process(clock, btn_r, btn_l, btn_c) -- checks roshambo logic once per clock cycle if 
   --variable player_temp, computer_temp : integer := -1;
   variable state : std_logic_vector (2 downto 0) := "000";
   variable count : std_logic_vector (2 downto 0) := "000";
@@ -48,7 +75,8 @@ begin
         else state := "XXX";
         end if;
     when "001" => -- first state, stays here if no buttons are pressed
-        if player_select = 0 or player_select = 1 or player_select = 2 then
+        if btn_r = '1' or btn_l = '1' or btn_c = '1' then
+        --if player_select = 0 or player_select = 1 or player_select = 2 then
           state := "011";
         else state := "001";
         end if;
@@ -80,9 +108,66 @@ begin
     when others =>
       state := "XXX";
     end case;
+    
 end if;    
 -- updates scores
 
 
 end process;
+
+-- checks button presses and associates them with the corresponding rock, paper
+-- scissors state, also sets or clears the choice signal, which sets a new game
+-- starting.
+kicked: process(clock, btn_r, btn_l, btn_c)
+begin  
+if rising_edge(clock) then
+    if btn_r = '0' and btn_l = '0' and btn_c = '0' then
+        choice <= '0';
+        player_select <= -1;
+        RPS_in_p <= -1;
+    elsif btn_r = '1' and btn_l = '0' and btn_c = '0' then
+        player_select <= 2;
+        computer_select <= RPS_in_c;
+        RPS_in_p <= 2;
+        choice <= '1';
+    elsif btn_l = '1' and btn_r = '0' and btn_c = '0' then
+        player_select <= 0;
+        computer_select <= RPS_in_c;
+        RPS_in_p <= 0;
+        choice <= '1';
+    elsif btn_c <= '1' and btn_l = '0' and btn_r = '0' then
+        player_select <= 1;
+        computer_select <= RPS_in_c;
+        RPS_in_p <= 1;
+        choice <= '1';
+    else
+      choice <= 'X';
+      player_select <= -1;
+      RPS_in_p <= 3;
+    end if;
+end if;
+end process;
+
+
+
+-- When choice is low the computer's rock, paper, scissors choice spins. When
+-- choice goes high, the computers selection is frozen and th players selection
+-- is shown. The score is also passed to the decoder each cycle.
+roshambo_rotate: process(choice, clock)
+
+    begin
+
+    if rising_edge(clock) then
+        if choice = '0' then -- flag check to make sure a button hasn't been pressed
+         if RPS_in_c = 2 then
+            RPS_in_c <= 0;
+         else
+            RPS_in_c <= RPS_in_c + 1;
+         end if;
+        elsif choice = '1' then
+        -- stops rotating, i.e. nothing
+        end if;
+    end if;
+    end process;
+
 end Behavioral;
