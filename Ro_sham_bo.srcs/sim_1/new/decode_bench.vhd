@@ -53,6 +53,21 @@ signal RPS_out : std_logic_vector (6 downto 0);
 signal digit_in : integer;
 signal digit_out : std_logic_vector (6 downto 0);
 
+procedure Monitor(shouldbe: in STD_logic_vector(6 downto 0)) is
+variable lout: line;
+begin
+    write(lout, now, right, 10, ns);
+    write(lout, string'(" Rock Paper Scissors selection --> "));
+    write(lout, RPS_in);
+    write(lout, string'(" RPS seven segment --> "));
+    write(lout, RPS_out);
+    write(lout, string'(" Score in --> "));
+    write(lout, digit_in);
+    write(lout, string'(" Score out --> "));
+    write(lout, digit_out);
+    writeline(output, lout);
+    assert digit_out = shouldbe report "Test Failed" severity failure;
+end Monitor;
 
 begin
 M3: decoder port map (RPS_in => RPS_in, RPS_out => RPS_out, digit_in => digit_in, digit_out => digit_out);
@@ -60,31 +75,22 @@ M3: decoder port map (RPS_in => RPS_in, RPS_out => RPS_out, digit_in => digit_in
 stim_process: process
 begin
 
-        wait for 5 ns;
-        RPS_in <= 0;
-        digit_in <= 0;
-        wait for 1 ns;    
-        digit_in <= 1;
-        RPS_in <= 1;
-        wait for 1 ns;
-        RPS_in <= 2;
-        digit_in <= 2;
-        wait for 1 ns;    
-        digit_in <= 3;
-        wait for 1 ns;
-        digit_in <= 4;
-        wait for 1 ns;
-        digit_in <= 5;
-        wait for 1 ns;
+        wait for 5 us;
+        RPS_in <= 0; digit_in <= 0;
+        wait for 1 us;
+        Monitor("0000001");
+        
         digit_in <= 6;
-        wait for 1 ns;
-        digit_in <= 7;
-        wait for 1 ns;
-        digit_in <= 8;
-        wait for 1 ns;
-        digit_in <= 9;        
-        wait for 5 ns;
-        wait;
+        wait for 1 us;    
+        Monitor("0100000");
+        
+        digit_in <= 4;
+        wait for 1us;
+        Monitor("1001100");
+        
+        digit_in <= 11;
+        wait for 1us;
+        Monitor("1001100");
 
 end process;   
 end Behavioral;

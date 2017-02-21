@@ -1,21 +1,10 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
+-- Engineer: Aaron Crump
+-- Class: EGR 426
 -- Create Date: 02/09/2017 06:49:40 PM
 -- Design Name: 
 -- Module Name: debounce_bench - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
+-- Project Name: Roshambo 
 ----------------------------------------------------------------------------------
 
 
@@ -49,6 +38,17 @@ end component;
 signal clk, btn_in : std_logic := '0'; --inputs
 signal btn_out : std_logic; --outputs
 
+procedure Monitor(shouldbe: in STD_logic) is
+variable lout: line;
+begin
+    write(lout, now, right, 10, ns);
+    write(lout, string'(" button in --> "));
+    write(lout, btn_in);
+    write(lout, string'(" button out --> "));
+    write(lout, btn_out);
+    writeline(output, lout);
+    assert btn_out = shouldbe report "Test Failed" severity failure;
+end Monitor;
 
 begin
 M1: debouncer port map (clk => clk, btn_in => btn_in, btn_out => btn_out);
@@ -68,14 +68,25 @@ begin
 -- btn_out should go high for the first btn_in high, since 2000us is more than a 15 count
 --on the debounce clock, this is confirmed by the waveform. The next high signal is only 1000 us
 --long so btn_out should not go high.
+
+        btn_in <= '1'; -- hold the button low for a count of 15 clock cycles should pass
         wait for 2000 us;
-        btn_in <='1';
-        wait for 2000 us;    
-        btn_in <='0'; 
-        wait for 2000 us;
-        btn_in <= '1';
+        Monitor('1');
+        wait for 100 us; -- reset button for next test
+        btn_in <= '0';
+        wait for 100 us;
+        
+        btn_in <= '1'; -- don't hold the button down long enough, btn_out shouldn't go high
         wait for 1000 us;    
-        btn_in <= '0'; 
+        Monitor('0'); 
+        wait for 100 us; -- reset button for next test
+        btn_in <= '0';
+        wait for 100 us;
+        
+        btn_in <= '0'; -- no button being pressed, btn_out should stay low.
+        wait for 2000 us;
+        Monitor('1');
+         
         wait;
   end process;
          

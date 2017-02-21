@@ -93,9 +93,9 @@ U1: clk port map(clock_in => clock, clk_out => clock_divide, clock_out_slow => s
 U2: mux port map(seven => seven, an_sel => an_sel, clk => clock_divide, player_select_digit => player_select_digit,
      player_score_digit => player_score_digit, computer_select_digit => computer_select_digit, 
      computer_score_digit => computer_score_digit);
-U3: debouncer port map(clk => clock, btn_out => btn_out_l, btn_in => btn_left);
-U4: debouncer port map(clk => clock, btn_out => btn_out_r, btn_in => btn_right);
-U5: debouncer port map(clk => clock, btn_out => btn_out_c, btn_in => btn_cntr);  
+U3: debouncer port map(clk => fast_clock, btn_out => btn_out_l, btn_in => btn_left);
+U4: debouncer port map(clk => fast_clock, btn_out => btn_out_r, btn_in => btn_right);
+U5: debouncer port map(clk => fast_clock, btn_out => btn_out_c, btn_in => btn_cntr);  
 U8: roshambo_logic port map(clock => slow_clk, btn_l => btn_out_l, btn_r => btn_out_r, btn_c => btn_out_c,
     player_select_out => player_select_digit, computer_select_out => computer_select_digit, player_score_out => player_score_digit, 
     computer_score_out => computer_score_digit);

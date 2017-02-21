@@ -1,4 +1,6 @@
-
+-- Aaron Crump
+-- Class: EGR 426
+-- Date: 02/15/2017
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -40,6 +42,27 @@ signal an_sel : std_logic_vector (3 downto 0);--outputs
 signal seven : std_logic_vector (6 downto 0);
 
 
+procedure Monitor(shouldbe: in STD_logic_vector(6 downto 0)) is
+variable lout: line;
+begin
+    write(lout, now, right, 10, ns);
+    write(lout, string'(" player select --> "));
+    write(lout, player_select_digit);
+    write(lout, string'(" computer select --> "));
+    write(lout, computer_select_digit);
+    write(lout, string'(" player score --> "));
+    write(lout, player_score_digit);
+    write(lout, string'(" computer score --> "));
+    write(lout, computer_score_digit);
+    write(lout, string'(" anode --> "));
+    write(lout, an_sel);
+    write(lout, string'(" seven segment --> "));
+    write(lout, seven);
+    writeline(output, lout);
+    assert seven = shouldbe report "Test Failed" severity failure;
+end Monitor;
+
+
 begin
 M2: mux port map (clk => clk, player_select_digit => player_select_digit, computer_select_digit => computer_select_digit, 
 player_score_digit => player_score_digit, computer_score_digit => computer_score_digit, an_sel => an_sel, seven => seven);
@@ -47,23 +70,28 @@ player_score_digit => player_score_digit, computer_score_digit => computer_score
 clk_process: process
    begin
         clk <= '0';
-        wait for 1 ns;  --for 1 ps signal is '0'.
+        wait for 1 us;  --for 1 ps signal is '0'.
         clk <= '1';
-        wait for 1 ns;  --for next 1 ps signal is '1'.
+        wait for 1 us;  --for next 1 ps signal is '1'.
    end process;   
 stim_process: process
 begin
-
-        wait for 5 ns;
-        player_select_digit <= "0000001";
-        wait for 5 ns;    
-        computer_select_digit <= "1001111";
-        wait for 1 ns;
-        player_score_digit <= "0100100";
-        wait for 1 ns;    
-        computer_score_digit <= "0001111";
-        wait for 1 ns;
-        wait for 5 ns;
+        wait for 1 us;
+        an_sel <= "1011"; player_select_digit <= "0000001";
+        wait for 1 us;
+        Monitor("0000001");
+        
+        an_sel <= "1101"; computer_select_digit <= "0000011";
+        wait for 2 us;
+        Monitor("0000011");
+        
+        an_sel <= "1110"; computer_score_digit <= "1000001";
+        wait for 2 us;
+        Monitor("1000001");
+         
+        an_sel <= "1101"; player_score_digit <= "1100011";
+        wait for 2 us;
+        Monitor("1100001");                
         wait;
 
 

@@ -1,0 +1,87 @@
+Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2016.3 (lin64) Build 1682563 Mon Oct 10 19:07:26 MDT 2016
+| Date         : Wed Feb 15 17:38:45 2017
+| Host         : Aoide-ThinkPad-T410 running 64-bit Ubuntu 16.04.2 LTS
+| Command      : report_control_sets -verbose -file seven_seg_control_sets_placed.rpt
+| Design       : seven_seg
+| Device       : xc7a35t
+--------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Flip-Flop Distribution
+3. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Number of unique control sets                            |    20 |
+| Unused register locations in slices containing registers |    83 |
++----------------------------------------------------------+-------+
+
+
+2. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |              20 |           15 |
+| No           | No                    | Yes                    |               0 |            0 |
+| No           | Yes                   | No                     |              69 |           23 |
+| Yes          | No                    | No                     |              96 |           31 |
+| Yes          | No                    | Yes                    |               0 |            0 |
+| Yes          | Yes                   | No                     |              44 |           12 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+3. Detailed Control Set Information
+-----------------------------------
+
++-------------------+---------------------------+---------------------------+------------------+----------------+
+|    Clock Signal   |       Enable Signal       |      Set/Reset Signal     | Slice Load Count | Bel Load Count |
++-------------------+---------------------------+---------------------------+------------------+----------------+
+|  U3/latch_reg_n_0 |                           |                           |                1 |              1 |
+|  U1/clock_divide  |                           | U2/plusOp[1]              |                1 |              1 |
+|  U1/clock_divide  |                           | U2/count[0]               |                1 |              1 |
+|  U5/latch_reg_n_0 |                           |                           |                1 |              1 |
+|  U4/latch_reg_n_0 |                           |                           |                1 |              1 |
+|  U1/clock_divide  |                           | U2/plusOp[0]              |                1 |              2 |
+|  U1/CLK           |                           |                           |                3 |              3 |
+|  U1/CLK           | U3/DB_count[3]_i_2_n_0    | U3/DB_count[3]_i_1_n_0    |                1 |              4 |
+|  U1/CLK           | U4/DB_count[3]_i_2__0_n_0 | U4/DB_count[3]_i_1__0_n_0 |                1 |              4 |
+|  U1/CLK           | U5/DB_count[3]_i_2__1_n_0 | U5/DB_count[3]_i_1__1_n_0 |                1 |              4 |
+|  slow_clk_BUFG    |                           |                           |                3 |              5 |
+|  slow_clk_BUFG    |                           | U3/D[0]                   |                2 |              5 |
+|  U1/clock_divide  |                           |                           |                6 |              9 |
+|  clock_IBUF_BUFG  |                           | U1/fast_count[0]_i_1_n_0  |                5 |             15 |
+|  clock_IBUF_BUFG  |                           | U1/clear                  |                6 |             20 |
+|  clock_IBUF_BUFG  |                           | U1/slow_count[0]_i_1_n_0  |                7 |             25 |
+|  slow_clk_BUFG    | U8/RPS_in_c[31]_i_2_n_0   | U8/RPS_in_c[31]_i_1_n_0   |                9 |             32 |
+|  slow_clk_BUFG    | U8/computer_score         |                           |               10 |             32 |
+|  slow_clk_BUFG    | U4/E[0]                   |                           |               10 |             32 |
+|  slow_clk_BUFG    | U8/player_score           |                           |               11 |             32 |
++-------------------+---------------------------+---------------------------+------------------+----------------+
+
+
++--------+-----------------------+
+| Fanout | Number of ControlSets |
++--------+-----------------------+
+| 1      |                     5 |
+| 2      |                     1 |
+| 3      |                     1 |
+| 4      |                     3 |
+| 5      |                     2 |
+| 9      |                     1 |
+| 15     |                     1 |
+| 16+    |                     6 |
++--------+-----------------------+
+
+
